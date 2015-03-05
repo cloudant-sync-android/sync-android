@@ -19,6 +19,17 @@ android {
         buildConfigField "Class[]", "classToTests", "$classes"
         buildConfigField "String", "testOutputFile", "\"$testResultsFile\""
         buildConfigField "Class[]", "testExcludes", "{com.cloudant.common.SystemTest.class, com.cloudant.common.RequireRunningCouchDB.class, com.cloudant.common.PerformanceTest.class}"
+
+        //include the test configs
+        buildConfigField "String", "COUCH_USERNAME",  "\""+System.getProperty("test.couch.username","")+"\""
+        buildConfigField "String", "COUCH_PASSWORD",  "\""+System.getProperty("test.couch.password","")+"\""
+        buildConfigField "String", "COUCH_HOST",  "\""+System.getProperty("test.couch.host","localhost")+"\""
+        buildConfigField "String", "COUCH_PORT", "\""+System.getProperty("test.couch.port","5984")+"\""
+        buildConfigField "String", "HTTP_PROTOCOL", "\""+System.getProperty("test.couch.http","http")+"\""
+
+        buildConfigField "String", "IGNORE_COMPACTION", "\""+System.getProperty("test.couch.ignore.auth.headers",Boolean.FALSE.toString())+"\""
+        buildConfigField "String", "IGNORE_AUTH_HEADERS", "\""+System.getProperty("test.couch.ignore.compaction",Boolean.FALSE.toString())+"\""
+
     }
 
     productFlavors {

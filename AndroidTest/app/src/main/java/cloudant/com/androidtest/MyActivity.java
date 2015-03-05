@@ -49,8 +49,8 @@ public class MyActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //set up dexcache this is a workaround for https://code.google.com/p/dexmaker/issues/detail?id=2
-        System.setProperty( "dexmaker.dexcache", this.getCacheDir().getPath() );
+
+        setTestProperties();
 
         trs = TestResultStorage.getInstance();
         mAdapter = new ArrayAdapter<TestResults>(this,R.layout.list_view_text);
@@ -155,6 +155,29 @@ public class MyActivity extends ListActivity {
         intent.putExtra(BundleConstants.EXCEPTION_STACK,tr.exceptionStack());
 
         this.startActivity(intent); // start display
+
+    }
+
+    private void setTestProperties(){
+        //set up dexcache this is a workaround for https://code.google.com/p/dexmaker/issues/detail?id=2
+        System.setProperty( "dexmaker.dexcache", this.getCacheDir().getPath() );
+        //if the host is set to localhost or 127.0.0.1 map it to 10.0.0.2, the special thing
+        //for android emulators to connect to the host machines loop back interface
+        System.setProperty("test.with.specified.couch", Boolean.toString(true)); //always test with a specified couch
+
+        if(BuildConfig.COUCH_HOST.equals("localhost")|| BuildConfig.COUCH_HOST.equals("127.0.0.1"))
+        {
+            System.setProperty("test.couch.host","10.0.0.2");
+        } else {
+            System.setProperty("test.couch.host",BuildConfig.COUCH_HOST);
+        }
+        System.setProperty("test.couch.host",BuildConfig.COUCH_HOST);
+        System.setProperty("test.couch.port",BuildConfig.COUCH_PORT);
+        System.setProperty("test.couch.password",BuildConfig.COUCH_PASSWORD);
+        System.setProperty("test.couch.username",BuildConfig.COUCH_USERNAME);
+        System.setProperty("test.couch.protocol", BuildConfig.COUCH_PORT);
+        System.setProperty("test.ignore.compaction",BuildConfig.IGNORE_COMPACTION);
+        System.setProperty("test.ignore.auth.headers",BuildConfig.IGNORE_AUTH_HEADERS);
 
     }
 }

@@ -38,19 +38,12 @@ public abstract class CouchTestBase {
 
     public CouchConfig getCouchConfig(String db) {
 
+        //Android is always a specified couch via the AndroidTest runner
         if (SPECIFIED_COUCH) {
             return SpecifiedCouch.defaultConfig(db);
         }
         else {
-            String host;
-             // If we're running on the Android emulator, 127.0.0.1 is the emulated device, rather
-             // than the host machine. Instead we connect to 10.0.2.2.
-            if(Misc.isRunningOnAndroid()){
-                host = "10.0.2.2";
-            } else {
-                host = "127.0.0.1";
-            }
-            return this.defaultConfig(host, db);
+            return this.defaultConfig("127.0.0.1", db);
         }
     }
 
