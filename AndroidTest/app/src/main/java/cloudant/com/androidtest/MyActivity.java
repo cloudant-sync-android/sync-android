@@ -161,18 +161,10 @@ public class MyActivity extends ListActivity {
     private void setTestProperties(){
         //set up dexcache this is a workaround for https://code.google.com/p/dexmaker/issues/detail?id=2
         System.setProperty( "dexmaker.dexcache", this.getCacheDir().getPath() );
-        //if the host is set to localhost or 127.0.0.1 map it to 10.0.0.2, the special thing
-        //for android emulators to connect to the host machines loop back interface
-        System.setProperty("test.with.specified.couch", Boolean.toString(true)); //always test with a specified couch
 
         for(String[] testOption : BuildConfig.TEST_CONFIG){
-            if(testOption[0].equals("test.couch.host") && (testOption[1].equals("127.0.0.1") || testOption[1].equals("localhost")) ){
-                System.setProperty(testOption[0],"10.0.0.2");
-            } else {
                 System.setProperty(testOption[0], testOption[1]);
-            }
         }
-
 
     }
 }
