@@ -21,6 +21,7 @@ android {
         buildConfigField "String", "testOutputFile", "\"$testResultsFile\""
         buildConfigField "Class[]", "testExcludes", "{com.cloudant.common.SystemTest.class, com.cloudant.common.RequireRunningCouchDB.class, com.cloudant.common.PerformanceTest.class}"
 
+        //pass test config as key value pairs
 
         buildConfigField "String[][]", "TEST_CONFIG", testConfig
 
@@ -110,20 +111,13 @@ task(uploadFixtures,type:Exec) {
 
 def convertTestSysPropsToHash (){
 
-    def hash = "{"
-    def firstElement = true
+    return "{" +
+            System.properties.grep { prop ->
+                prop.key.startsWith("test") }
+            .collect(new ArrayList()) { prop -> "{\""+prop.key+"\",\""+ prop.value+"\"}"}
+                    .join(",") +
+            "}"
 
-    System.properties.each { prop ->
-        if (prop.key.startsWith("test")) {
-            if(!firstElement){
-                hash = hash +","
-            }
-            firstElement = false
-            hash = hash+"{\""+prop.key+"\",\""+ prop.value+"\"}"
-        }
-    }
-
-    return hash + "}"
 }
 
 def findAllTestClasses(File root){
