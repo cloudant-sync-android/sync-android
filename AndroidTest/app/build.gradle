@@ -3,6 +3,7 @@ apply plugin: 'com.android.application'
 def testResultsFile = "testResults_"+UUID.randomUUID().toString()+".xml"
 def scriptLocation = project.projectDir.getAbsolutePath(); //this is the location of THIS file
 def testSrcDir = "../../sync-core/src/test/java/" // this is the location of your test code, relative to this file
+def testConfig = convertTestSysPropsToHash()
 
 android {
     def classes = findAllTestClasses(new File("$scriptLocation/$testSrcDir")).toString().replace("[","{").replace("]","}");
@@ -20,15 +21,8 @@ android {
         buildConfigField "String", "testOutputFile", "\"$testResultsFile\""
         buildConfigField "Class[]", "testExcludes", "{com.cloudant.common.SystemTest.class, com.cloudant.common.RequireRunningCouchDB.class, com.cloudant.common.PerformanceTest.class}"
 
-        //include the test configs
-        buildConfigField "String", "COUCH_USERNAME",  "\""+System.getProperty("test.couch.username","")+"\""
-        buildConfigField "String", "COUCH_PASSWORD",  "\""+System.getProperty("test.couch.password","")+"\""
-        buildConfigField "String", "COUCH_HOST",  "\""+System.getProperty("test.couch.host","localhost")+"\""
-        buildConfigField "String", "COUCH_PORT", "\""+System.getProperty("test.couch.port","5984")+"\""
-        buildConfigField "String", "HTTP_PROTOCOL", "\""+System.getProperty("test.couch.http","http")+"\""
 
-        buildConfigField "String", "IGNORE_COMPACTION", "\""+System.getProperty("test.couch.ignore.auth.headers",Boolean.FALSE.toString())+"\""
-        buildConfigField "String", "IGNORE_AUTH_HEADERS", "\""+System.getProperty("test.couch.ignore.compaction",Boolean.FALSE.toString())+"\""
+        buildConfigField "String[][]", "TEST_CONFIG", testConfig
 
     }
 
@@ -112,6 +106,24 @@ task(uploadFixtures,type:Exec) {
     // this will work irrespective of current working directory due to use of $scriptLocation
     def android = "$System.env.ANDROID_HOME"
     commandLine "$android/platform-tools/adb","push", "-p", "$scriptLocation/../../fixture", "/sdcard/fixture"
+}
+
+def convertTestSysPropsToHash (){
+
+    def hash = "{"
+    def firstElement = true
+
+    System.properties.each { prop ->
+        if (prop.key.startsWith("test")) {
+            if(!firstElement){
+                hash = hash +","
+            }
+            firstElement = false
+            hash = hash+"{\""+prop.key+"\",\""+ prop.value+"\"}"
+        }
+    }
+
+    return hash + "}"
 }
 
 def findAllTestClasses(File root){

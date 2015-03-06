@@ -165,19 +165,14 @@ public class MyActivity extends ListActivity {
         //for android emulators to connect to the host machines loop back interface
         System.setProperty("test.with.specified.couch", Boolean.toString(true)); //always test with a specified couch
 
-        if(BuildConfig.COUCH_HOST.equals("localhost")|| BuildConfig.COUCH_HOST.equals("127.0.0.1"))
-        {
-            System.setProperty("test.couch.host","10.0.0.2");
-        } else {
-            System.setProperty("test.couch.host",BuildConfig.COUCH_HOST);
+        for(String[] testOption : BuildConfig.TEST_CONFIG){
+            if(testOption[0].equals("test.couch.host") && (testOption[1].equals("127.0.0.1") || testOption[1].equals("localhost")) ){
+                System.setProperty(testOption[0],"10.0.0.2");
+            } else {
+                System.setProperty(testOption[0], testOption[1]);
+            }
         }
-        System.setProperty("test.couch.host",BuildConfig.COUCH_HOST);
-        System.setProperty("test.couch.port",BuildConfig.COUCH_PORT);
-        System.setProperty("test.couch.password",BuildConfig.COUCH_PASSWORD);
-        System.setProperty("test.couch.username",BuildConfig.COUCH_USERNAME);
-        System.setProperty("test.couch.protocol", BuildConfig.COUCH_PORT);
-        System.setProperty("test.ignore.compaction",BuildConfig.IGNORE_COMPACTION);
-        System.setProperty("test.ignore.auth.headers",BuildConfig.IGNORE_AUTH_HEADERS);
+
 
     }
 }
