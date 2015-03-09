@@ -112,11 +112,11 @@ task(uploadFixtures,type:Exec) {
 def convertTestSysPropsToHash (){
 
     return "{" +
-            System.properties.grep { prop ->
-                prop.key.startsWith("test") }
-            .collect(new ArrayList()) { prop -> "{\""+prop.key+"\",\""+ prop.value+"\"}"}
-                    .join(",") +
-            "}"
+        System.properties
+        .grep { prop -> prop.key.startsWith("test") }
+        .collect(new ArrayList()) { prop -> "{\""+prop.key+"\",\""+ prop.value+"\"}"}
+        .join(",") +
+        "}"
 
 }
 
